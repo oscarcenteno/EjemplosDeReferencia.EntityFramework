@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Ejemplos.EntityFramework.ConsoleApplication.Cuentas
@@ -28,13 +29,15 @@ namespace Ejemplos.EntityFramework.ConsoleApplication.Cuentas
 
         public static void ImprimaTodasLasCuentasEHistoricos()
         {
+            Trace.WriteLine($"Consultanto todas las cuentas y sus historicos");
+
             using (var db = new CuentasContext())
             {
                 var lasCuentas = from cadaCuenta in db.Cuentas
                                  select cadaCuenta;
 
                 Console.WriteLine(string.Empty);
-                Console.WriteLine("CONSULTANDO Todas las cuentas y sus historicos:");
+                Console.WriteLine("CONSULTANDO todas las cuentas y sus historicos:");
 
                 foreach (var unaCuenta in lasCuentas)
                 {
@@ -53,14 +56,16 @@ namespace Ejemplos.EntityFramework.ConsoleApplication.Cuentas
             Console.ReadKey();
         }
 
-        public static void AgregueUnaCuenta(string elNombre, int elIdEntidadComoNumero, int elIdDeMonedaComoNumero)
+        public static void AgregueUnaCuenta(string elNombre, int elIdEntidadComoNumero, int elIdMonedaComoNumero)
         {
+            Trace.WriteLine($"Agregando la cuenta IdEntidad: {elIdEntidadComoNumero} IdMoneda: {elIdMonedaComoNumero} Nombre: {elNombre}");
+
             using (var db = new CuentasContext())
             {
                 var laCuenta = new Cuenta
                 {
                     IdEntidad = elIdEntidadComoNumero,
-                    IdMoneda = elIdDeMonedaComoNumero
+                    IdMoneda = elIdMonedaComoNumero
                 };
 
                 var elHistorico = new Historico
@@ -72,6 +77,7 @@ namespace Ejemplos.EntityFramework.ConsoleApplication.Cuentas
 
                 laCuenta.Agregue(elHistorico);
                 db.Cuentas.Add(laCuenta);
+
                 db.SaveChanges();
             }
         }
@@ -101,6 +107,8 @@ namespace Ejemplos.EntityFramework.ConsoleApplication.Cuentas
 
         private static void ConsulteLosDatosActuales()
         {
+            Trace.WriteLine($"Consultanto las cuentas actuales");
+
             using (var db = new CuentasContext())
             {
                 // Obtenga las cuentas aplanadas con el historico mas reciente
@@ -126,24 +134,23 @@ namespace Ejemplos.EntityFramework.ConsoleApplication.Cuentas
             }
         }
 
-        public static void EditeLaCuenta(int elIdDeEntidadComoNumero, int elIdMonedaComoNumero, string elNombre)
+        public static void EditeLaCuenta(int elIdEntidadComoNumero, int elIdMonedaComoNumero, string elNombre)
         {
+            Trace.WriteLine($"Editando la cuenta IdEntidad: {elIdEntidadComoNumero} IdMoneda: {elIdMonedaComoNumero} Nombre: {elNombre}");
+
             using (var db = new CuentasContext())
             {
-                Cuenta laCuenta;
-                laCuenta = (from unaCuenta in db.Cuentas
-                            where unaCuenta.IdEntidad.Equals(elIdDeEntidadComoNumero)
-                            && unaCuenta.IdMoneda.Equals(elIdMonedaComoNumero)
-                            select unaCuenta).First();
-
                 var elNuevoHistorico = new Historico
                 {
+                    IdEntidad = elIdEntidadComoNumero,
+                    IdMoneda = elIdMonedaComoNumero,
                     Nombre = elNombre,
                     FechaDeModificacion = DateTime.Now,
                     Estado = 2
                 };
 
-                laCuenta.Agregue(elNuevoHistorico);
+                db.Historicos.Add(elNuevoHistorico);
+
                 db.SaveChanges();
             }
         }
