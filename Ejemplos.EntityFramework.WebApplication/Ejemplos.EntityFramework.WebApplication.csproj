@@ -13,8 +13,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cuentas.WebApplication</RootNamespace>
-    <AssemblyName>Cuentas.WebApplication</AssemblyName>
+    <RootNamespace>Ejemplos.EntityFramework.WebApplication</RootNamespace>
+    <AssemblyName>Ejemplos.EntityFramework.WebApplication</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -156,7 +156,6 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\CuentaVigenteVista.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -174,9 +173,6 @@
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="ApplicationInsights.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -200,9 +196,9 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Cuentas\About.cshtml" />
+    <Content Include="Views\Cuentas\Contact.cshtml" />
+    <Content Include="Views\Cuentas\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -217,9 +213,9 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EjemplosDeReferencia.EF.ConsoleApplication.csproj">
+    <ProjectReference Include="..\Ejemplos.EntityFramework.ConsoleApplication\Ejemplos.EntityFramework.ConsoleApplication.csproj">
       <Project>{f36d133e-d35f-4a62-8a7b-9a12664f8251}</Project>
-      <Name>EjemplosDeReferencia.EF.ConsoleApplication</Name>
+      <Name>Ejemplos.EntityFramework.ConsoleApplication</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

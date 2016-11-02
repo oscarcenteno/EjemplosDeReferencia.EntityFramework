@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 
-namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
+namespace Ejemplos.EntityFramework.ConsoleApplication.Cuentas
 {
     public static class Escenario
     {
@@ -31,13 +28,15 @@ namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
 
         public static void ImprimaTodasLasCuentasEHistoricos()
         {
+            Trace.WriteLine($"Consultanto todas las cuentas y sus historicos");
+
             using (var db = new CuentasContext())
             {
                 var lasCuentas = from cadaCuenta in db.Cuentas
                                  select cadaCuenta;
 
                 Console.WriteLine(string.Empty);
-                Console.WriteLine("CONSULTANDO Todas las cuentas y sus historicos:");
+                Console.WriteLine("CONSULTANDO todas las cuentas y sus historicos:");
 
                 foreach (var unaCuenta in lasCuentas)
                 {
@@ -56,14 +55,16 @@ namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
             Console.ReadKey();
         }
 
-        public static void AgregueUnaCuenta(string elNombre, int elIdEntidadComoNumero, int elIdDeMonedaComoNumero)
+        public static void AgregueUnaCuenta(string elNombre, int elIdEntidadComoNumero, int elIdMonedaComoNumero)
         {
+            Trace.WriteLine($"Agregando la cuenta IdEntidad: {elIdEntidadComoNumero} IdMoneda: {elIdMonedaComoNumero} Nombre: {elNombre}");
+
             using (var db = new CuentasContext())
             {
                 var laCuenta = new Cuenta
                 {
                     IdEntidad = elIdEntidadComoNumero,
-                    IdMoneda = elIdDeMonedaComoNumero
+                    IdMoneda = elIdMonedaComoNumero
                 };
 
                 var elHistorico = new Historico
@@ -75,6 +76,7 @@ namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
 
                 laCuenta.Agregue(elHistorico);
                 db.Cuentas.Add(laCuenta);
+
                 db.SaveChanges();
             }
         }
@@ -127,45 +129,48 @@ namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
 
         private static DbSet<Cuenta> ObtengaTodasLasCuentas(CuentasContext elContexto)
         {
-            return elContexto.Cuentas;
-        }
-
-        private static IEnumerable<CuentaVigente> ObtengaLasCuentasAplanadas(IQueryable<Cuenta> lasCuentas)
-        {
-            // Obtenga las cuentas aplanadas con el historico mas reciente
-            IEnumerable<CuentaVigente> laConsulta = from cadaCuenta in lasCuentas
-                                                    let losHistoricos = cadaCuenta.Historicos
-                                                    let losOrdenados = losHistoricos.OrderByDescending(unHistorico => unHistorico.FechaDeModificacion)
-                                                    let elMasReciente = losOrdenados.FirstOrDefault()
-                                                    select new CuentaVigente()
-                                                    {
-                                                        IdEntidad = cadaCuenta.IdEntidad,
-                                                        IdMoneda = cadaCuenta.IdMoneda,
-                                                        Nombre = elMasReciente.Nombre,
-                                                        FechaDeActualizacion = elMasReciente.FechaDeModificacion,
-                                                        Estado = elMasReciente.Estado
-                                                    };
-            return laConsulta.ToList();
-        }
-
-        public static void EditeLaCuenta(int elIdDeEntidadComoNumero, int elIdMonedaComoNumero, string elNombre)
-        {
             using (var db = new CuentasContext())
             {
-                Cuenta laCuenta;
-                laCuenta = (from unaCuenta in db.Cuentas
-                            where unaCuenta.IdEntidad.Equals(elIdDeEntidadComoNumero)
-                            && unaCuenta.IdMoneda.Equals(elIdMonedaComoNumero)
-                            select unaCuenta).First();
+                // Obtenga las cuentas aplanadas con el historico mas reciente
+                IQueryable<CuentaVigente> lasCuentas;
+                lasCuentas = from cadaCuenta in db.Cuentas
+                             let losHistoricos = cadaCuenta.Historicos
+                             let losOrdenados = losHistoricos.OrderByDescending(x => x.FechaDeModificacion)
+                             let elMasReciente = losOrdenados.FirstOrDefault()
+                             select new CuentaVigente()
+                             {
+                                 IdEntidad = cadaCuenta.IdEntidad,
+                                 IdMoneda = cadaCuenta.IdMoneda,
+                                 Nombre = elMasReciente.Nombre,
+                                 FechaDeActualizacion = elMasReciente.FechaDeModificacion,
+                                 Estado = elMasReciente.Estado
+                             };
 
+                Console.WriteLine("CONSULTANDO los datos actuales de cada cuenta:");
+                foreach (var unaCuenta in lasCuentas)
+                {
+                    Console.WriteLine(unaCuenta.IdEntidad + " " + unaCuenta.IdMoneda + " " + unaCuenta.Nombre + " " + unaCuenta.Estado + " " + unaCuenta.FechaDeActualizacion);
+                }
+            }
+        }
+
+        public static void EditeLaCuenta(int elIdEntidadComoNumero, int elIdMonedaComoNumero, string elNombre)
+        {
+            Trace.WriteLine($"Editando la cuenta IdEntidad: {elIdEntidadComoNumero} IdMoneda: {elIdMonedaComoNumero} Nombre: {elNombre}");
+
+            using (var db = new CuentasContext())
+            {
                 var elNuevoHistorico = new Historico
                 {
+                    IdEntidad = elIdEntidadComoNumero,
+                    IdMoneda = elIdMonedaComoNumero,
                     Nombre = elNombre,
                     FechaDeModificacion = DateTime.Now,
                     Estado = 2
                 };
 
-                laCuenta.Agregue(elNuevoHistorico);
+                db.Historicos.Add(elNuevoHistorico);
+
                 db.SaveChanges();
             }
         }
