@@ -21,7 +21,23 @@ namespace Cuentas.WebApplication.Controllers
             Escenario.EditeLaCuenta(3, 2, "Cuenta4 Nueva");
             Escenario.EditeLaCuenta(4, 19, "Cuenta4 Nueva");
 
-            return View();
+            IEnumerable<CuentaVigente>lasCuentas = Escenario.ListeLasCuentas();
+            IEnumerable<CuentaVigenteVista> lasVistas = MapeeLasVistas(lasCuentas);
+
+            return View(lasVistas);
+        }
+
+        private IEnumerable<CuentaVigenteVista> MapeeLasVistas(IEnumerable<CuentaVigente> lasCuentas)
+        {
+            List<CuentaVigenteVista> lasVistas = new List<CuentaVigenteVista>();
+
+            foreach (CuentaVigente unaCuenta in lasCuentas)
+            {
+                CuentaVigenteVista laVista = new CuentaVigenteVista(unaCuenta);
+                lasVistas.Add(laVista);
+            }
+
+            return lasVistas;
         }
 
         public ActionResult About()

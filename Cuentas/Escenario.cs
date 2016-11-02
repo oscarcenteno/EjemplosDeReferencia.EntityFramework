@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
@@ -93,37 +96,56 @@ namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
 
             EditeLaCuenta(elIdDeEntidadComoNumero, elIdMonedaComoNumero, elNombre);
 
-            ConsulteLosDatosActuales();
+            ImprimaLosDatosActuales();
 
             Console.WriteLine("Presione una tecla para continuar...");
             Console.ReadKey();
         }
 
-        private static void ConsulteLosDatosActuales()
+        private static void ImprimaLosDatosActuales()
         {
-            using (var db = new CuentasContext())
-            {
-                // Obtenga las cuentas aplanadas con el historico mas reciente
-                IQueryable<CuentaVigente> lasCuentas;
-                lasCuentas = from cadaCuenta in db.Cuentas
-                             let losHistoricos = cadaCuenta.Historicos
-                             let losOrdenados = losHistoricos.OrderByDescending(x => x.FechaDeModificacion)
-                             let elMasReciente = losOrdenados.FirstOrDefault()
-                             select new CuentaVigente()
-                             {
-                                 IdEntidad = cadaCuenta.IdEntidad,
-                                 IdMoneda = cadaCuenta.IdMoneda,
-                                 Nombre = elMasReciente.Nombre,
-                                 FechaDeActualizacion = elMasReciente.FechaDeModificacion,
-                                 Estado = elMasReciente.Estado
-                             };
+            Console.WriteLine("CONSULTANDO los datos actuales de cada cuenta:");
+            var lasCuentas = ListeLasCuentas();
 
-                Console.WriteLine("CONSULTANDO los datos actuales de cada cuenta:");
-                foreach (var unaCuenta in lasCuentas)
-                {
-                    Console.WriteLine(unaCuenta.IdEntidad + " " + unaCuenta.IdMoneda + " " + unaCuenta.Nombre + " " + unaCuenta.Estado + " " + unaCuenta.FechaDeActualizacion);
-                }
+            foreach (var unaCuenta in lasCuentas)
+            {
+                Console.WriteLine(unaCuenta.IdEntidad + " " + unaCuenta.IdMoneda + " " + unaCuenta.Nombre + " " + unaCuenta.Estado + " " + unaCuenta.FechaDeActualizacion);
             }
+        }
+
+        public static IEnumerable<CuentaVigente> ListeLasCuentas()
+        {
+            IEnumerable<CuentaVigente> lasCuentas;
+            using (var elContexto = new CuentasContext())
+            {
+                DbSet<Cuenta> todasLasCuentas = ObtengaTodasLasCuentas(elContexto);
+                lasCuentas = ObtengaLasCuentasAplanadas(todasLasCuentas);
+            }
+
+            return lasCuentas;
+        }
+
+        private static DbSet<Cuenta> ObtengaTodasLasCuentas(CuentasContext elContexto)
+        {
+            return elContexto.Cuentas;
+        }
+
+        private static IEnumerable<CuentaVigente> ObtengaLasCuentasAplanadas(IQueryable<Cuenta> lasCuentas)
+        {
+            // Obtenga las cuentas aplanadas con el historico mas reciente
+            IEnumerable<CuentaVigente> laConsulta = from cadaCuenta in lasCuentas
+                                                    let losHistoricos = cadaCuenta.Historicos
+                                                    let losOrdenados = losHistoricos.OrderByDescending(unHistorico => unHistorico.FechaDeModificacion)
+                                                    let elMasReciente = losOrdenados.FirstOrDefault()
+                                                    select new CuentaVigente()
+                                                    {
+                                                        IdEntidad = cadaCuenta.IdEntidad,
+                                                        IdMoneda = cadaCuenta.IdMoneda,
+                                                        Nombre = elMasReciente.Nombre,
+                                                        FechaDeActualizacion = elMasReciente.FechaDeModificacion,
+                                                        Estado = elMasReciente.Estado
+                                                    };
+            return laConsulta.ToList();
         }
 
         public static void EditeLaCuenta(int elIdDeEntidadComoNumero, int elIdMonedaComoNumero, string elNombre)

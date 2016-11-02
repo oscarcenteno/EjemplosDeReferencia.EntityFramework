@@ -2,7 +2,7 @@
 
 namespace EjemplosDeReferencia.EF.ConsoleApplication.Cuentas
 {
-    internal class CuentaVigente
+    public class CuentaVigente
     {
         public DateTime FechaDeActualizacion { get; internal set; }
         public int IdMoneda { get; internal set; }
