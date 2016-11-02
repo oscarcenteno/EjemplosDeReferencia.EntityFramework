@@ -1,4 +1,4 @@
-﻿using Ejemplos.EntityFramework.ConsoleApplication.Cuentas;
+﻿using EjemplosDeReferencia.EF.ConsoleApplication.Cuentas;
 
 namespace Ejemplos.EntityFramework.ConsoleApplication
 {

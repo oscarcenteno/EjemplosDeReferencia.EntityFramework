@@ -1,5 +1,5 @@
 ﻿using System;
-using EjemplosDeReferencia.EF.ConsoleApplication.Cuentas;
+using Ejemplos.EntityFramework.ConsoleApplication.Cuentas;
 
 namespace Cuentas.WebApplication.Controllers
 {

@@ -1,4 +1,7 @@
-﻿using Ejemplos.EntityFramework.ConsoleApplication.Cuentas;
+﻿using Cuentas.WebApplication.Controllers;
+using Ejemplos.EntityFramework.ConsoleApplication.Cuentas;
+using EjemplosDeReferencia.EF.ConsoleApplication.Cuentas;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace Ejemplos.EntityFramework.WebApplication.Controllers
